@@ -12,32 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/nursing-activity")
 public class InPatientScheduleController extends BaseRestController {
-
-  @RequestMapping(method = RequestMethod.GET, value = "/{uuid}",produces = "application/json")
+  @RequestMapping(method = RequestMethod.GET, value = "/{uuid}", produces = "application/json")
   @ResponseBody
   public String getSchedule(@PathVariable("uuid") String patientUuid) {
-    return "{\n" +
-        "  medicineName: \"Metformin 850mg\",\n" +
-        "  dose: 1,\n" +
-        "  unit: TAB,\n" +
-        "  frequency: BID,\n" +
-        "  schedules: [{\n" +
-        "    scheduledTime: new Date('June 2, 2018 02:30:00'),\n" +
-        "    status: TOBEADMINISTRATED\n" +
-        "  }, {\n" +
-        "    scheduledTime: new Date('June 3, 2018 9:30:00'),\n" +
-        "    status: NOTADMINISTRATED\n" +
-        "  }, {\n" +
-        "    scheduledTime: new Date('June 4, 2018 02:30:00'),\n" +
-        "    status: NOTADMINISTRATED\n" +
-        "  }, {\n" +
-        "    scheduledTime: new Date('June 5, 2018 07:30:00'),\n" +
-        "    status: NOTADMINISTRATED\n" +
-        "  }, {\n" +
-        "    scheduledTime: new Date('June 6, 2018 02:30:00'),\n" +
-        "    status: ADMINISTRATED\n" +
-        "  }]\n" +
-        "}";
+    return "{\"medicineName\":\"Metformin 850mg\",\"dose\":1,\"unit\":\"TAB\",\"frequency\":\"BID\",\"schedules\":[{\"scheduledTime\":\"2018-06-01T21:00:00.000Z\",\"status\":\"TOBEADMINISTRATED\"},{\"scheduledTime\":\"2018-06-03T04:00:00.000Z\",\"status\":\"NOTADMINISTRATED\"},{\"scheduledTime\":\"2018-06-03T21:00:00.000Z\",\"status\":\"NOTADMINISTRATED\"},{\"scheduledTime\":\"2018-06-05T02:00:00.000Z\",\"status\":\"NOTADMINISTRATED\"},{\"scheduledTime\":\"2018-06-05T21:00:00.000Z\",\"status\":\"ADMINISTRATED\"}]}";
   }
 
 }
