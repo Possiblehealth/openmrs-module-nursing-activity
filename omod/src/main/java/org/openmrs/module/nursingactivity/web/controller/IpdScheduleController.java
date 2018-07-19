@@ -1,11 +1,9 @@
 package org.openmrs.module.nursingactivity.web.controller;
 
 
-import org.openmrs.Patient;
-import org.openmrs.api.PatientService;
+import com.google.gson.Gson;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 import org.openmrs.module.nursingactivity.service.NursingActivityService;
-import org.openmrs.module.nursingactivity.web.contract.NursingActivityScheduleDefaultResponse;
 import org.openmrs.module.nursingactivity.web.mapper.NursingActivityScheduleMapper;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController;
@@ -22,16 +20,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/ipd/schedules")
 public class IpdScheduleController extends BaseRestController {
-
-  @Autowired
-  PatientService patientService;
-
   @Autowired
   NursingActivityService nursingActivityService;
-
-
-  @Autowired
-  private NursingActivityScheduleMapper nursingActivityScheduleMapper;
 
   @RequestMapping(method = RequestMethod.GET, value = "/{uuid}", produces = "application/json")
   @ResponseBody
@@ -41,13 +31,17 @@ public class IpdScheduleController extends BaseRestController {
 
   @RequestMapping(method = RequestMethod.GET,value = "/patient/{uuid}",produces = "application/json")
   @ResponseBody
-  public List<NursingActivityScheduleDefaultResponse> getPatientSchedules(@PathVariable("uuid")String patientUuid) {
-    Patient patient = patientService.getPatientByUuid(patientUuid);
-    if (patient == null) {
-      throw new RuntimeException("Patient does not exist");
-//      return Collections.emptyList(); //should throw 404 error if patient in not found
-    }
-    List<NursingActivitySchedule> scheduleEntriesForPatient = nursingActivityService.getScheduleEntriesForPatient(patient);
-    return nursingActivityScheduleMapper.constructResponse(scheduleEntriesForPatient);
+  public List<Object> getPatientSchedules(@PathVariable("uuid")String patientUuid) {
+    List<NursingActivitySchedule> scheduleEntriesForPatient = nursingActivityService.getScheduleEntriesForPatient(patientUuid);
+    System.out.println("****************************");
+    System.out.println(scheduleEntriesForPatient);
+    System.out.println("****************************");
+    Gson gson = new Gson();
+    NursingActivityScheduleMapper nursingActivityScheduleMapper = new NursingActivityScheduleMapper();
+    return nursingActivityScheduleMapper.createResponse(scheduleEntriesForPatient);
+//    return gson.toJson(scheduleEntriesForPatient, new TypeToken<ArrayList<NursingActivitySchedule>>() {
+//    }.getType());
+    //    return gson.toJson(scheduleEntriesForPatient);
+//    return scheduleEntriesForPatient;
   }
 }

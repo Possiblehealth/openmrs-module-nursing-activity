@@ -15,16 +15,16 @@
     <property name="scheduleTime" type="java.util.Date" column="schedule_time"/>
     <property name="actualTime" type="java.util.Date" column="actual_time"/>
     <many-to-one name="activityType" class="NursingActivityType" column="nursing_activity_type_id"/>
+
+    <joined-subclass name="org.openmrs.module.nursingactivity.model.MedicationAdministrationSchedule" table="ipd_scheduled_medication_instruction">
+
+      <key column="nursing_activity_schedule_id" />
+
+      <many-to-one name="drugId" class="org.openmrs.Drug" not-null="false" column="drug_id"/>
+
+      <property name="dose" type="java.lang.Double" column="dose" length="22"/>
+      <many-to-one name="doseUnits" class="org.openmrs.Concept" column="dose_units" />
+      <many-to-one name="route" class="org.openmrs.Concept" column="route"/>
+    </joined-subclass>
   </class>
-
-  <joined-subclass name="IpdScheduledMedicationInstruction" table="ipd_scheduled_medication_instruction">
-
-    <key column="nursing_activity_schedule_id" />
-
-    <many-to-one name="drugId" class="org.openmrs.Drug" not-null="false" column="drug_id"/>
-
-    <property name="dose" type="java.lang.Double" column="dose" length="22"/>
-    <many-to-one name="doseUnits" class="org.openmrs.Concept" column="dose_units" />
-    <many-to-one name="route" class="org.openmrs.Concept" column="route"/>
-  </joined-subclass>
 </hibernate-mapping>

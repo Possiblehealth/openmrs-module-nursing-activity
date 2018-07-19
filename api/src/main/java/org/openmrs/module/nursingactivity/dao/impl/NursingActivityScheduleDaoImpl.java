@@ -1,13 +1,16 @@
 package org.openmrs.module.nursingactivity.dao.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.openmrs.Patient;
 import org.openmrs.module.nursingactivity.dao.NursingActivityScheduleDao;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -22,8 +25,9 @@ public class NursingActivityScheduleDaoImpl implements NursingActivityScheduleDa
 
   @Override
   public List<NursingActivitySchedule> getScheduleEntriesForPatient(Patient patient) {
-    NursingActivitySchedule schedule = new NursingActivitySchedule();
-    schedule.setPatient(patient);
-    return Collections.singletonList(schedule);
+    Criteria criteria = sessionFactory.getCurrentSession().createCriteria(NursingActivitySchedule.class);
+    criteria.add(Restrictions.eq("patient", patient));
+    return criteria.list();
   }
+
 }

@@ -1,39 +1,49 @@
 package org.openmrs.module.nursingactivity.web.mapper;
 
+import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
-import org.openmrs.module.nursingactivity.web.contract.NursingActivityScheduleDefaultResponse;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component
 public class NursingActivityScheduleMapper {
-
-  public NursingActivityScheduleDefaultResponse constructResponse(NursingActivitySchedule nursingActivitySchedule) {
-    return this.mapToDefaultResponse(nursingActivitySchedule, new NursingActivityScheduleDefaultResponse());
+  public NursingActivityScheduleMapper() {
   }
 
-  private NursingActivityScheduleDefaultResponse mapToDefaultResponse(NursingActivitySchedule nursingActivitySchedule, NursingActivityScheduleDefaultResponse response) {
-    response.setScheduleId(nursingActivitySchedule.getScheduleId());
-    response.setPatient(createPatientMap(nursingActivitySchedule.getPatient()));
-    response.setStartDateTime(nursingActivitySchedule.getScheduleTime());
-    response.setStatus(nursingActivitySchedule.getStatus());
-    return response;
+  public List<Object> createResponse(List<NursingActivitySchedule> scheduleEntriesForPatient) {
+    return scheduleEntriesForPatient.stream().map(schedule -> this.mapToDefaultResponse(schedule)).collect(Collectors.toList());
   }
 
-  private Map createPatientMap(Patient p) {
+  private Object mapToDefaultResponse(NursingActivitySchedule schedule) {
     Map map = new HashMap();
-    map.put("name", p.getPersonName().getFullName());
-    map.put("uuid", p.getUuid());
-    map.put("identifier", p.getPatientIdentifier().getIdentifier());
+    map.put("scheduledId", schedule.getScheduleId());
+    map.put("patient", mapPatient(schedule.getPatient()));
+    map.put("scheduledTime", schedule.getScheduleTime());
+    map.put("order", mapOrder(schedule.getOrder()));
+    map.put("status", schedule.getStatus());
     return map;
   }
 
-  public List<NursingActivityScheduleDefaultResponse> constructResponse(List<NursingActivitySchedule> scheduleEntriesForPatient) {
-    return scheduleEntriesForPatient.stream().map(as -> this.mapToDefaultResponse(as, new NursingActivityScheduleDefaultResponse())).collect(Collectors.toList());
+  private Map mapOrder(Order order) {
+    Map orderMap = new HashMap();
+    orderMap.put("uuid", order.getUuid());
+    orderMap.put("date", order.getDateCreated());
+    Map providerMap = new HashMap();
+    providerMap.put("uuid", order.getOrderer().getUuid());
+    providerMap.put("name", order.getOrderer().getName());
+    orderMap.put("orderer",providerMap);
+
+    return orderMap;
+  }
+
+  private Object mapPatient(Patient patient) {
+    Map patientMap = new HashMap();
+    patientMap.put("name", patient.getPersonName().getFullName());
+    patientMap.put("uuid", patient.getUuid());
+    patientMap.put("identifier", patient.getPatientIdentifier().getIdentifier());
+    return patientMap;
   }
 }

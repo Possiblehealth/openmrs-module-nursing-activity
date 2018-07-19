@@ -3,9 +3,7 @@ package org.openmrs.module.nursingactivity.model;
 import org.openmrs.Concept;
 import org.openmrs.Drug;
 
-public class IpdScheduledMedicationInstruction {
-  private Integer instructionId;
-  private NursingActivitySchedule nursingActivityScheduleId;
+public class MedicationAdministrationSchedule extends NursingActivitySchedule {
   private Double dose;
   private Concept doseUnits;
   private Concept route;
@@ -43,19 +41,15 @@ public class IpdScheduledMedicationInstruction {
     this.dose = dose;
   }
 
-  public NursingActivitySchedule getNursingActivityScheduleId() {
-    return nursingActivityScheduleId;
-  }
 
-  public void setNursingActivityScheduleId(NursingActivitySchedule nursingActivityScheduleId) {
-    this.nursingActivityScheduleId = nursingActivityScheduleId;
-  }
-
-  public Integer getInstructionId() {
-    return instructionId;
-  }
-
-  public void setInstructionId(Integer instructionId) {
-    this.instructionId = instructionId;
-  }
+//  @Override
+//  public String toString() {
+//    return super.toString() + ", MedicationAdministrationSchedule{" +
+//        "nursingActivityScheduleId=" + nursingActivityScheduleId +
+//        ", dose=" + dose +
+//        ", doseUnits=" + doseUnits +
+//        ", route=" + route +
+//        ", drugId=" + drugId +
+//        '}';
+//  }
 }
