@@ -40,16 +40,4 @@ public class MedicationAdministrationSchedule extends NursingActivitySchedule {
   public void setDose(Double dose) {
     this.dose = dose;
   }
-
-
-//  @Override
-//  public String toString() {
-//    return super.toString() + ", MedicationAdministrationSchedule{" +
-//        "nursingActivityScheduleId=" + nursingActivityScheduleId +
-//        ", dose=" + dose +
-//        ", doseUnits=" + doseUnits +
-//        ", route=" + route +
-//        ", drugId=" + drugId +
-//        '}';
-//  }
 }

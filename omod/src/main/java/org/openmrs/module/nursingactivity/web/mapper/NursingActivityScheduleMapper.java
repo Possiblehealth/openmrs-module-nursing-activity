@@ -2,6 +2,7 @@ package org.openmrs.module.nursingactivity.web.mapper;
 
 import org.openmrs.Order;
 import org.openmrs.Patient;
+import org.openmrs.PersonName;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 
 import java.util.HashMap;
@@ -34,14 +35,20 @@ public class NursingActivityScheduleMapper {
     Map providerMap = new HashMap();
     providerMap.put("uuid", order.getOrderer().getUuid());
     providerMap.put("name", order.getOrderer().getName());
-    orderMap.put("orderer",providerMap);
-
+    orderMap.put("orderer", providerMap);
     return orderMap;
   }
 
   private Object mapPatient(Patient patient) {
+    PersonName personName = patient.getPersonName();
+    Map personNameMap = new HashMap();
+    personNameMap.put("givenName",personName.getGivenName());
+    personNameMap.put("middleName",personName.getMiddleName());
+    personNameMap.put("familyName",personName.getFamilyName());
+    personNameMap.put("fullName",personName.getFullName());
+
     Map patientMap = new HashMap();
-    patientMap.put("name", patient.getPersonName().getFullName());
+    patientMap.put("personName", personNameMap);
     patientMap.put("uuid", patient.getUuid());
     patientMap.put("identifier", patient.getPatientIdentifier().getIdentifier());
     return patientMap;

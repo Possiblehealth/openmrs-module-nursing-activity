@@ -77,7 +77,8 @@
       <column name="route" type="int"/>
     </createTable>
     <addForeignKeyConstraint constraintName="medication_instruction_nursing_activity_schedule_fk"
-                             baseTableName="ipd_scheduled_medication_instruction" baseColumnNames="nursing_activity_schedule_id"
+                             baseTableName="ipd_scheduled_medication_instruction"
+                             baseColumnNames="nursing_activity_schedule_id"
                              referencedTableName="nursing_activity_schedule"
                              referencedColumnNames="nursing_activity_schedule_id"/>
   </changeSet>

@@ -69,17 +69,4 @@ public class NursingActivitySchedule {
   public void setPatient(Patient patient) {
     this.patient = patient;
   }
-
-//  @Override
-//  public String toString() {
-//    return "NursingActivitySchedule{" +
-//        "patient=" + patient +
-//        ", order=" + order +
-//        ", scheduleTime=" + scheduleTime +
-//        ", actualTime=" + actualTime +
-//        ", scheduleId=" + scheduleId +
-//        ", activityType=" + activityType +
-//        ", status='" + status + '\'' +
-//        '}';
-//  }
 }

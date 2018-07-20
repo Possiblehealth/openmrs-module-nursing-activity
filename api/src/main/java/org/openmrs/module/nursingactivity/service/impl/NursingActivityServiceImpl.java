@@ -1,7 +1,5 @@
 package org.openmrs.module.nursingactivity.service.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.nursingactivity.dao.NursingActivityScheduleDao;

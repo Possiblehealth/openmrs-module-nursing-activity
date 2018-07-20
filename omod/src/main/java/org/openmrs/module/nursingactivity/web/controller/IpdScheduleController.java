@@ -1,7 +1,6 @@
 package org.openmrs.module.nursingactivity.web.controller;
 
 
-import com.google.gson.Gson;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 import org.openmrs.module.nursingactivity.service.NursingActivityService;
 import org.openmrs.module.nursingactivity.web.mapper.NursingActivityScheduleMapper;
@@ -29,19 +28,11 @@ public class IpdScheduleController extends BaseRestController {
     return "{\"medicineName\":\"Metformin 850mg\",\"dose\":1,\"unit\":\"TAB\",\"frequency\":\"BID\",\"schedules\":[{\"scheduledTime\":\"2018-06-01T21:00:00.000Z\",\"status\":\"TOBEADMINISTRATED\"},{\"scheduledTime\":\"2018-06-03T04:00:00.000Z\",\"status\":\"NOTADMINISTRATED\"},{\"scheduledTime\":\"2018-06-03T21:00:00.000Z\",\"status\":\"NOTADMINISTRATED\"},{\"scheduledTime\":\"2018-06-05T02:00:00.000Z\",\"status\":\"NOTADMINISTRATED\"},{\"scheduledTime\":\"2018-06-05T21:00:00.000Z\",\"status\":\"ADMINISTRATED\"}]}";
   }
 
-  @RequestMapping(method = RequestMethod.GET,value = "/patient/{uuid}",produces = "application/json")
+  @RequestMapping(method = RequestMethod.GET, value = "/patient/{uuid}", produces = "application/json")
   @ResponseBody
-  public List<Object> getPatientSchedules(@PathVariable("uuid")String patientUuid) {
+  public List<Object> getPatientSchedules(@PathVariable("uuid") String patientUuid) {
     List<NursingActivitySchedule> scheduleEntriesForPatient = nursingActivityService.getScheduleEntriesForPatient(patientUuid);
-    System.out.println("****************************");
-    System.out.println(scheduleEntriesForPatient);
-    System.out.println("****************************");
-    Gson gson = new Gson();
     NursingActivityScheduleMapper nursingActivityScheduleMapper = new NursingActivityScheduleMapper();
     return nursingActivityScheduleMapper.createResponse(scheduleEntriesForPatient);
-//    return gson.toJson(scheduleEntriesForPatient, new TypeToken<ArrayList<NursingActivitySchedule>>() {
-//    }.getType());
-    //    return gson.toJson(scheduleEntriesForPatient);
-//    return scheduleEntriesForPatient;
   }
 }
