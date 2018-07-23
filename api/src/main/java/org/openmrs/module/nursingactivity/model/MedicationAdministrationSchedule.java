@@ -7,14 +7,14 @@ public class MedicationAdministrationSchedule extends NursingActivitySchedule {
   private Double dose;
   private Concept doseUnits;
   private Concept route;
-  private Drug drugId;
+  private Drug drug;
 
-  public Drug getDrugId() {
-    return drugId;
+  public Drug getDrug() {
+    return drug;
   }
 
-  public void setDrugId(Drug drugId) {
-    this.drugId = drugId;
+  public void setDrug(Drug drug) {
+    this.drug = drug;
   }
 
   public Concept getRoute() {

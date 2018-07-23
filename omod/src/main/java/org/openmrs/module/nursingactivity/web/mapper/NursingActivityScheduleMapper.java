@@ -1,12 +1,16 @@
 package org.openmrs.module.nursingactivity.web.mapper;
 
+import org.hibernate.proxy.HibernateProxy;
 import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.nursingactivity.model.MedicationAdministrationSchedule;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -20,12 +24,40 @@ public class NursingActivityScheduleMapper {
 
   private Object mapToDefaultResponse(NursingActivitySchedule schedule) {
     Map map = new HashMap();
-    map.put("scheduledId", schedule.getScheduleId());
+    map.put("scheduleId", schedule.getScheduleId());
     map.put("patient", mapPatient(schedule.getPatient()));
     map.put("scheduledTime", schedule.getScheduleTime());
-    map.put("order", mapOrder(schedule.getOrder()));
     map.put("status", schedule.getStatus());
+    Order order = schedule.getOrder();
+    map.put("order", mapOrder(order));
+    if (isMedicationAdministrationSchedule(schedule)) {
+      map.put("drug", mapDrug(schedule));
+    }
     return map;
+  }
+
+  private Map mapDrug(NursingActivitySchedule schedule) {
+    System.out.println(schedule);
+    Locale locale = Context.getUserContext().getLocale();
+    MedicationAdministrationSchedule schedule1 = (MedicationAdministrationSchedule) schedule;
+    Map drugMap = new HashMap();
+    drugMap.put("dose", schedule1.getDose());
+    drugMap.put("doseUnits", schedule1.getDoseUnits().getName(locale).getName());
+    drugMap.put("route", schedule1.getRoute().getName(locale).getName());
+    drugMap.put("drugName", schedule1.getDrug().getFullName(locale));
+    return drugMap;
+  }
+
+  private boolean isMedicationAdministrationSchedule(NursingActivitySchedule schedule) {
+    return MedicationAdministrationSchedule.class.isAssignableFrom(getActualType(schedule));
+  }
+
+  private Class<?> getActualType(Object persistentObject) {
+    Class<?> type = persistentObject.getClass();
+    if (persistentObject instanceof HibernateProxy) {
+      type = ((HibernateProxy) persistentObject).getHibernateLazyInitializer().getPersistentClass();
+    }
+    return type;
   }
 
   private Map mapOrder(Order order) {
@@ -42,10 +74,10 @@ public class NursingActivityScheduleMapper {
   private Object mapPatient(Patient patient) {
     PersonName personName = patient.getPersonName();
     Map personNameMap = new HashMap();
-    personNameMap.put("givenName",personName.getGivenName());
-    personNameMap.put("middleName",personName.getMiddleName());
-    personNameMap.put("familyName",personName.getFamilyName());
-    personNameMap.put("fullName",personName.getFullName());
+    personNameMap.put("givenName", personName.getGivenName());
+    personNameMap.put("middleName", personName.getMiddleName());
+    personNameMap.put("familyName", personName.getFamilyName());
+    personNameMap.put("fullName", personName.getFullName());
 
     Map patientMap = new HashMap();
     patientMap.put("personName", personNameMap);
