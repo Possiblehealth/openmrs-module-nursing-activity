@@ -9,6 +9,7 @@ import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -22,9 +23,10 @@ public class NursingActivityScheduleDaoImpl implements NursingActivityScheduleDa
   }
 
   @Override
-  public List<NursingActivitySchedule> getScheduleEntriesForPatient(Patient patient) {
+  public List<NursingActivitySchedule> getScheduleEntriesForPatient(Patient patient, Date startDate, Date endDate) {
     Criteria criteria = sessionFactory.getCurrentSession().createCriteria(NursingActivitySchedule.class);
     criteria.add(Restrictions.eq("patient", patient));
+    criteria.add(Restrictions.between("scheduleTime", startDate, endDate));
     return criteria.list();
   }
 

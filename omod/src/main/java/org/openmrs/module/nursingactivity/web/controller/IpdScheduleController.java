@@ -3,16 +3,16 @@ package org.openmrs.module.nursingactivity.web.controller;
 
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 import org.openmrs.module.nursingactivity.service.NursingActivityService;
+import org.openmrs.module.nursingactivity.utils.DateUtility;
 import org.openmrs.module.nursingactivity.web.mapper.NursingActivityScheduleMapper;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 
@@ -30,8 +30,12 @@ public class IpdScheduleController extends BaseRestController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/patient/{uuid}", produces = "application/json")
   @ResponseBody
-  public List<Object> getPatientSchedules(@PathVariable("uuid") String patientUuid) {
-    List<NursingActivitySchedule> scheduleEntriesForPatient = nursingActivityService.getScheduleEntriesForPatient(patientUuid);
+  public List<Object> getPatientSchedules(@PathVariable("uuid") String patientUuid,
+                                          @RequestParam("startDate") String startDateString,
+                                          @RequestParam("endDate") String endDateString) throws ParseException {
+    Date startDate = DateUtility.parseDate(startDateString);
+    Date endDate = DateUtility.parseDate(endDateString);
+    List<NursingActivitySchedule> scheduleEntriesForPatient = nursingActivityService.getScheduleEntriesForPatient(patientUuid, startDate, endDate);
     NursingActivityScheduleMapper nursingActivityScheduleMapper = new NursingActivityScheduleMapper();
     return nursingActivityScheduleMapper.createResponse(scheduleEntriesForPatient);
   }
