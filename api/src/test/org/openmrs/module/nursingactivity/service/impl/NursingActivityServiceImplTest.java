@@ -65,6 +65,18 @@ public class NursingActivityServiceImplTest {
 
   }
 
+  @Test
+  public void shouldConsiderEndDateAs7DaysFromStartDateWhenEndDateIsNull() throws ParseException {
+    Date startDate = DateUtility.parseDate("2018-01-09");
+    when(patientService.getPatientByUuid("XYZ")).thenReturn(patient);
+    nursingActivityService.getScheduleEntriesForPatient("XYZ", startDate, null);
+    verify(nursingActivityScheduleDao, Mockito.atLeastOnce())
+        .getScheduleEntriesForPatient(Mockito.eq(patient),
+            Mockito.eq(parseDateTime("2018-01-09 00:00:00")),
+            Mockito.eq(parseDateTime("2018-01-15 23:59:59")));
+
+  }
+
 
   private Date parseDateTime(String dateString) throws ParseException {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");

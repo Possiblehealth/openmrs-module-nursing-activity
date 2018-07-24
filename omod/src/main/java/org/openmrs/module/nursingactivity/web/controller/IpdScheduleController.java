@@ -31,8 +31,8 @@ public class IpdScheduleController extends BaseRestController {
   @RequestMapping(method = RequestMethod.GET, value = "/patient/{uuid}", produces = "application/json")
   @ResponseBody
   public List<Object> getPatientSchedules(@PathVariable("uuid") String patientUuid,
-                                          @RequestParam("startDate") String startDateString,
-                                          @RequestParam("endDate") String endDateString) throws ParseException {
+                                          @RequestParam(value = "startDate",required = false) String startDateString,
+                                          @RequestParam(value = "endDate", required = false) String endDateString) throws ParseException {
     Date startDate = DateUtility.parseDate(startDateString);
     Date endDate = DateUtility.parseDate(endDateString);
     List<NursingActivitySchedule> scheduleEntriesForPatient = nursingActivityService.getScheduleEntriesForPatient(patientUuid, startDate, endDate);

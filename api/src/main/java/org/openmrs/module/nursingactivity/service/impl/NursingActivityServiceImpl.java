@@ -33,6 +33,9 @@ public class NursingActivityServiceImpl implements NursingActivityService {
     if (patient == null) {
       throw new IllegalArgumentException("Patient is required when fetching active orders");
     }
+    if (endDate == null) {
+      endDate = DateUtility.addDays(startDate,6);
+    }
     if (DateUtility.compare(startDate, endDate) > 0) {
       throw new IllegalArgumentException("Given start date is after end date");
     }

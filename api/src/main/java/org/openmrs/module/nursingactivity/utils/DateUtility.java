@@ -7,6 +7,9 @@ import java.util.Date;
 
 public class DateUtility {
   public static Date parseDate(String dateString) throws ParseException {
+    if (dateString == null){
+      return null;
+    }
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     format.setLenient(false);
     return format.parse(dateString);
@@ -23,5 +26,12 @@ public class DateUtility {
 
   public static int compare(Date startDate, Date endDate) {
     return startDate.compareTo(endDate);
+  }
+
+  public static Date addDays(Date date, int noOfDaysToAdd) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    calendar.add(Calendar.DATE,noOfDaysToAdd);
+    return calendar.getTime();
   }
 }
