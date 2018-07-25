@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
+import static org.openmrs.module.nursingactivity.constants.MedicineScheduleConstants.START_OF_WEEK;
+
 @Service
 @Transactional
 public class NursingActivityServiceImpl implements NursingActivityService {
@@ -32,6 +34,9 @@ public class NursingActivityServiceImpl implements NursingActivityService {
     Patient patient = patientService.getPatientByUuid(patientUuid);
     if (patient == null) {
       throw new IllegalArgumentException("Patient is required when fetching active orders");
+    }
+    if (startDate == null && endDate == null){
+      startDate = DateUtility.getWeekStart(new Date(),START_OF_WEEK);
     }
     if (startDate == null){
       startDate = DateUtility.addDays(endDate,-6);

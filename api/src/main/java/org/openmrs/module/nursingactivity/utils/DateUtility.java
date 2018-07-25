@@ -34,4 +34,14 @@ public class DateUtility {
     calendar.add(Calendar.DATE,noOfDaysToAdd);
     return calendar.getTime();
   }
+
+  public static Date getWeekStart(Date date, int startOfWeek) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    calendar.clear(Calendar.MINUTE);
+    calendar.clear(Calendar.SECOND);
+    calendar.clear(Calendar.MILLISECOND);
+    calendar.set(Calendar.DAY_OF_WEEK, startOfWeek);
+    return calendar.getTime();
+  }
 }

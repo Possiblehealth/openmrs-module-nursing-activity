@@ -41,4 +41,13 @@ public class DateUtilityTest {
     result = DateUtility.compare(DateUtility.parseDate("2018-02-12"), DateUtility.parseDate("2018-02-12"));
     Assert.assertTrue("startDate should be equal to endDate. Actual: " + result, result == 0);
   }
+
+  @Test
+  public void shouldGetStartOfWeekWhenDateIsGiven() throws ParseException {
+    Date result = DateUtility.getWeekStart( DateUtility.parseDate("2018-07-25"),3);
+    Assert.assertEquals(DateUtility.parseDate("2018-07-24"),result);
+  }
+
+
+
 }
