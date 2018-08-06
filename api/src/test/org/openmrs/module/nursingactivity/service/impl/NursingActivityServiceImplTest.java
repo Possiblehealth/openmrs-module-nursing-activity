@@ -7,12 +7,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openmrs.Patient;
+import org.openmrs.api.OrderService;
 import org.openmrs.api.PatientService;
+import org.openmrs.module.nursingactivity.contract.MedicineScheduleRequest;
 import org.openmrs.module.nursingactivity.dao.NursingActivityScheduleDao;
 import org.openmrs.module.nursingactivity.utils.DateUtility;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.mockito.Mockito.verify;
@@ -26,6 +29,8 @@ public class NursingActivityServiceImplTest {
   private PatientService patientService;
   @Mock
   private NursingActivityScheduleDao nursingActivityScheduleDao;
+  @Mock
+  private OrderService orderService;
 
   private Patient patient;
   private NursingActivityServiceImpl nursingActivityService;
@@ -33,7 +38,7 @@ public class NursingActivityServiceImplTest {
   @Before
   public void setUp() {
     patient = new Patient();
-    nursingActivityService = new NursingActivityServiceImpl(patientService, nursingActivityScheduleDao);
+    nursingActivityService = new NursingActivityServiceImpl(patientService, nursingActivityScheduleDao, orderService);
   }
 
 
@@ -103,6 +108,23 @@ public class NursingActivityServiceImplTest {
             Mockito.eq(startDate),
             Mockito.eq(endDate));
 
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowErrorWhenIllegalPatientUuidIsProvidedWhileCreatingSchedules() {
+    when(patientService.getPatientByUuid("XYZ")).thenReturn(null);
+    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", new ArrayList<>());
+    nursingActivityService.createSchedules(scheduleRequest);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowErrorWhenTimingsConsistsArrayWhichDoesNotFollowTimeFormat() {
+    when(patientService.getPatientByUuid("XYZ")).thenReturn(null);
+    ArrayList<String> timings = new ArrayList<>();
+    timings.add("11:23");
+    timings.add("111:23");
+    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", timings);
+    nursingActivityService.createSchedules(scheduleRequest);
   }
 
   private Date parseDateTime(String dateString) throws ParseException {

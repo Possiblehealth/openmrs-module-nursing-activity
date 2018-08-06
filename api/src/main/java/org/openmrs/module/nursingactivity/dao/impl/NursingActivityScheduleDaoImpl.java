@@ -1,6 +1,7 @@
 package org.openmrs.module.nursingactivity.dao.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Patient;
@@ -28,6 +29,13 @@ public class NursingActivityScheduleDaoImpl implements NursingActivityScheduleDa
     criteria.add(Restrictions.eq("patient", patient));
     criteria.add(Restrictions.between("scheduleTime", startDate, endDate));
     return criteria.list();
+  }
+
+  @Override
+  public NursingActivitySchedule saveSchedule(NursingActivitySchedule schedule) {
+    Session currentSession = sessionFactory.getCurrentSession();
+    currentSession.saveOrUpdate(schedule);
+    return schedule;
   }
 
 }

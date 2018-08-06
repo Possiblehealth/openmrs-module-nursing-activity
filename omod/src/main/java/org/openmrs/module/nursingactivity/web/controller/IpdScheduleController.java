@@ -1,9 +1,11 @@
 package org.openmrs.module.nursingactivity.web.controller;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 import org.openmrs.module.nursingactivity.service.NursingActivityService;
 import org.openmrs.module.nursingactivity.utils.DateUtility;
+import org.openmrs.module.nursingactivity.contract.MedicineScheduleRequest;
 import org.openmrs.module.nursingactivity.web.mapper.NursingActivityScheduleMapper;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController;
@@ -38,5 +40,11 @@ public class IpdScheduleController extends BaseRestController {
     List<NursingActivitySchedule> scheduleEntriesForPatient = nursingActivityService.getScheduleEntriesForPatient(patientUuid, startDate, endDate);
     NursingActivityScheduleMapper nursingActivityScheduleMapper = new NursingActivityScheduleMapper();
     return nursingActivityScheduleMapper.createResponse(scheduleEntriesForPatient);
+  }
+
+  @RequestMapping(method = RequestMethod.POST)
+  @ResponseBody
+  public String save(@RequestBody MedicineScheduleRequest medicineScheduleRequest) {
+    return nursingActivityService.createSchedules(medicineScheduleRequest);
   }
 }

@@ -37,14 +37,15 @@ public class NursingActivityScheduleMapper {
   }
 
   private Map mapDrug(NursingActivitySchedule schedule) {
-    System.out.println(schedule);
+//    System.out.println(schedule);
     Locale locale = Context.getUserContext().getLocale();
-    MedicationAdministrationSchedule schedule1 = (MedicationAdministrationSchedule) schedule;
+    MedicationAdministrationSchedule medicationSchedule = (MedicationAdministrationSchedule) schedule;
     Map drugMap = new HashMap();
-    drugMap.put("dose", schedule1.getDose());
-    drugMap.put("doseUnits", schedule1.getDoseUnits().getName(locale).getName());
-    drugMap.put("route", schedule1.getRoute().getName(locale).getName());
-    drugMap.put("drugName", schedule1.getDrug().getFullName(locale));
+    drugMap.put("id", medicationSchedule.getDrug().getDrugId());
+    drugMap.put("dose", medicationSchedule.getDose());
+    drugMap.put("doseUnits", medicationSchedule.getDoseUnits().getName(locale).getName());
+    drugMap.put("route", medicationSchedule.getRoute().getName(locale).getName());
+    drugMap.put("drugName", medicationSchedule.getDrug().getFullName(locale));
     return drugMap;
   }
 
@@ -63,6 +64,7 @@ public class NursingActivityScheduleMapper {
   private Map mapOrder(Order order) {
     Map orderMap = new HashMap();
     orderMap.put("uuid", order.getUuid());
+    orderMap.put("orderNumber", order.getOrderNumber());
     orderMap.put("date", order.getDateCreated());
     Map providerMap = new HashMap();
     providerMap.put("uuid", order.getOrderer().getUuid());

@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface NursingActivityScheduleDao {
   List<NursingActivitySchedule> getScheduleEntriesForPatient(Patient patient, Date startDate, Date endDate);
+
+  NursingActivitySchedule saveSchedule(NursingActivitySchedule schedule);
 }
