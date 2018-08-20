@@ -5,6 +5,7 @@ import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.PatientService;
+import org.openmrs.module.nursingactivity.FrequencyType;
 import org.openmrs.module.nursingactivity.contract.MedicineScheduleRequest;
 import org.openmrs.module.nursingactivity.dao.NursingActivityScheduleDao;
 import org.openmrs.module.nursingactivity.model.MedicationAdministrationSchedule;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -46,14 +48,14 @@ public class NursingActivityServiceImpl implements NursingActivityService {
     if (patient == null) {
       throw new IllegalArgumentException("Patient is required when fetching active orders");
     }
-    if (startDate == null && endDate == null){
-      startDate = DateUtility.getWeekStart(new Date(),START_OF_WEEK);
+    if (startDate == null && endDate == null) {
+      startDate = DateUtility.getWeekStart(new Date(), START_OF_WEEK);
     }
-    if (startDate == null){
-      startDate = DateUtility.addDays(endDate,-6);
+    if (startDate == null) {
+      startDate = DateUtility.addDays(endDate, -6);
     }
     if (endDate == null) {
-      endDate = DateUtility.addDays(startDate,6);
+      endDate = DateUtility.addDays(startDate, 6);
     }
     if (DateUtility.compare(startDate, endDate) > 0) {
       throw new IllegalArgumentException("Given start date is after end date");
@@ -69,50 +71,74 @@ public class NursingActivityServiceImpl implements NursingActivityService {
     Patient patient = patientService.getPatientByUuid(patientUuid);
     Order order = orderService.getOrderByUuid(orderUuid);
     ArrayList<String> timings = medicineScheduleRequest.getTimings();
-    if (!DateUtility.areAllValidTimeStrings(timings)){
+    if (!DateUtility.areAllValidTimeStrings(timings)) {
       throw new IllegalArgumentException("Given time strings are not valid");
     }
-    if (patient == null){
+    if (patient == null) {
       throw new IllegalArgumentException("Patient is required when fetching active orders");
     }
     //TODO:Remove this when you are dealing with order as optional
-    if (order == null){
+    if (order == null) {
       throw new IllegalArgumentException("Currently order is required to create schedules");
     }
     Date startDate = order.getScheduledDate();
     Date endDate = order.getAutoExpireDate();
-    saveMedicationSchedules(patient,timings,order,startDate,endDate);
+    DrugOrder drugOrder = (DrugOrder) order;
+    if (medicineScheduleRequest.getScheduleType().equals(FrequencyType.WEEKLY)) {
+      saveWeeklyMedicineSchedules(patient, timings, drugOrder, startDate, endDate, medicineScheduleRequest.getDays());
+    } else {
+      saveDailyMedicationSchedules(patient, timings, drugOrder, startDate, endDate);
+    }
     return "{\"stats\":\"added\"}";
   }
 
-  private void saveMedicationSchedules(Patient patient, ArrayList<String> timings, Order order, Date startDate, Date endDate) {
-    for (Date scheduledDate = startDate; DateUtility.isBetween(startDate, endDate,scheduledDate);scheduledDate=DateUtility.addDays(scheduledDate,1)){
-      for (int j=0;j<timings.size();j++){
-        String timeString = timings.get(j);
+  private void saveWeeklyMedicineSchedules(Patient patient, ArrayList<String> timings, DrugOrder drugOrder, Date startDate, Date endDate, ArrayList<DayOfWeek> dayOfWeeks) {
+    if (dayOfWeeks == null || dayOfWeeks.size() == 0) {
+      throw new IllegalArgumentException("Days are required for week type schedules");
+    }
+    for (int i = 0; i < dayOfWeeks.size(); i++) {
+      ArrayList<Date> allDatesBetweenDuration = DateUtility.getAllDatesBetweenOf(dayOfWeeks.get(i), startDate, endDate);
+      saveMedicationSchedulesForDuration(patient, drugOrder, allDatesBetweenDuration, timings);
+    }
+  }
 
-        Date scheduleTime = createScheduleTime(scheduledDate, timeString);
-        NursingActivityType activityType = new NursingActivityType();
-        activityType.setTypeId(1);
-        activityType.setActivityName("Medication");
+  private void saveMedicationSchedulesForDuration(Patient patient, DrugOrder drugOrder, ArrayList<Date> allDatesBetweenDuration, ArrayList<String> timings) {
+    for (int j = 0; j < allDatesBetweenDuration.size(); j++) {
+      Date scheduledDate = allDatesBetweenDuration.get(j);
+      saveSchedulesForADay(patient, timings, drugOrder, scheduledDate);
+    }
+  }
 
-        DrugOrder drugOrder = (DrugOrder) order;
+  private void saveDailyMedicationSchedules(Patient patient, ArrayList<String> timings, DrugOrder drugOrder, Date startDate, Date endDate) {
+    for (Date scheduledDate = startDate; DateUtility.isBetween(startDate, endDate, scheduledDate); scheduledDate = DateUtility.addDays(scheduledDate, 1)) {
+      saveSchedulesForADay(patient, timings, drugOrder, scheduledDate);
+    }
+  }
 
-        MedicationAdministrationSchedule schedule = new MedicationAdministrationSchedule();
-        schedule.setPatient(patient);
-        schedule.setOrder(drugOrder);
-        schedule.setDose(drugOrder.getDose());
-        schedule.setDoseUnits(drugOrder.getDoseUnits());
-        schedule.setDrug(drugOrder.getDrug());
-        schedule.setRoute(drugOrder.getRoute());
+  private void saveSchedulesForADay(Patient patient, ArrayList<String> timings, DrugOrder drugOrder, Date scheduledDate) {
+    for (int j = 0; j < timings.size(); j++) {
+      String timeString = timings.get(j);
 
-        schedule.setActivityType(activityType);
-        schedule.setScheduleTime(scheduleTime);
-        schedule.setStatus("scheduled");
+      Date scheduleTime = createScheduleTime(scheduledDate, timeString);
+      NursingActivityType activityType = new NursingActivityType();
+      activityType.setTypeId(1);
+      activityType.setActivityName("Medication");
 
-        this.nursingActivityScheduleDao.saveSchedule(schedule);
+      MedicationAdministrationSchedule schedule = new MedicationAdministrationSchedule();
+      schedule.setPatient(patient);
+      schedule.setOrder(drugOrder);
+      schedule.setDose(drugOrder.getDose());
+      schedule.setDoseUnits(drugOrder.getDoseUnits());
+      schedule.setDrug(drugOrder.getDrug());
+      schedule.setRoute(drugOrder.getRoute());
 
-        System.out.println(schedule);
-      }
+      schedule.setActivityType(activityType);
+      schedule.setScheduleTime(scheduleTime);
+      schedule.setStatus("scheduled");
+
+      this.nursingActivityScheduleDao.saveSchedule(schedule);
+
+      System.out.println(schedule);
     }
   }
 
@@ -122,6 +148,6 @@ public class NursingActivityServiceImpl implements NursingActivityService {
     LocalTime time = LocalTime.parse(timeString, formatter);
     newDate.setHours(time.getHour());
     newDate.setMinutes(time.getMinute());
-    return  newDate;
+    return newDate;
   }
 }

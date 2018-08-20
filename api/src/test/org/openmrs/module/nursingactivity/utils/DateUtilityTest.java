@@ -3,10 +3,8 @@ package org.openmrs.module.nursingactivity.utils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.naming.Reference;
 import java.text.ParseException;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -31,7 +29,7 @@ public class DateUtilityTest {
   public void shouldGiveAddNoOfDaysAskedToAdd() throws ParseException {
     Date date = DateUtility.parseDate("2018-12-10");
     Date expectedDate = DateUtility.parseDate("2018-12-17");
-    Assert.assertEquals(DateUtility.addDays(date, 7),expectedDate);
+    Assert.assertEquals(DateUtility.addDays(date, 7), expectedDate);
   }
 
   @Test
@@ -48,8 +46,8 @@ public class DateUtilityTest {
 
   @Test
   public void shouldGetStartOfWeekWhenDateIsGiven() throws ParseException {
-    Date result = DateUtility.getWeekStart( DateUtility.parseDate("2018-07-25"),3);
-    Assert.assertEquals(DateUtility.parseDate("2018-07-24"),result);
+    Date result = DateUtility.getWeekStart(DateUtility.parseDate("2018-07-25"), 3);
+    Assert.assertEquals(DateUtility.parseDate("2018-07-24"), result);
   }
 
   @Test
@@ -79,7 +77,7 @@ public class DateUtilityTest {
   public void shouldGiveTrueWhenGivenDateIsSameAsStartDate() throws ParseException {
     Date startDate = DateUtility.parseDate("2018-12-10");
     Date endDate = DateUtility.parseDate("2018-12-13");
-    Assert.assertTrue(DateUtility.isBetween(startDate,endDate,startDate));
+    Assert.assertTrue(DateUtility.isBetween(startDate, endDate, startDate));
   }
 
   @Test
@@ -87,7 +85,7 @@ public class DateUtilityTest {
     Date givenDate = DateUtility.parseDate("2018-12-9");
     Date startDate = DateUtility.parseDate("2018-12-10");
     Date endDate = DateUtility.parseDate("2018-12-13");
-    Assert.assertFalse(DateUtility.isBetween(startDate,endDate,givenDate));
+    Assert.assertFalse(DateUtility.isBetween(startDate, endDate, givenDate));
   }
 
   @Test
@@ -95,7 +93,7 @@ public class DateUtilityTest {
     Date givenDate = DateUtility.parseDate("2018-12-12");
     Date startDate = DateUtility.parseDate("2018-12-10");
     Date endDate = DateUtility.parseDate("2018-12-13");
-    Assert.assertTrue(DateUtility.isBetween(startDate,endDate,givenDate));
+    Assert.assertTrue(DateUtility.isBetween(startDate, endDate, givenDate));
   }
 
   @Test
@@ -103,7 +101,7 @@ public class DateUtilityTest {
     Date givenDate = DateUtility.parseDate("2018-12-13");
     Date startDate = DateUtility.parseDate("2018-12-10");
     Date endDate = DateUtility.parseDate("2018-12-13");
-    Assert.assertTrue(DateUtility.isBetween(startDate,endDate,givenDate));
+    Assert.assertTrue(DateUtility.isBetween(startDate, endDate, givenDate));
   }
 
   @Test
@@ -111,35 +109,36 @@ public class DateUtilityTest {
     Date givenDate = DateUtility.parseDate("2018-12-14");
     Date startDate = DateUtility.parseDate("2018-12-10");
     Date endDate = DateUtility.parseDate("2018-12-13");
-    Assert.assertFalse(DateUtility.isBetween(startDate,endDate,givenDate));
+    Assert.assertFalse(DateUtility.isBetween(startDate, endDate, givenDate));
   }
 
   @Test
-  public void shouldGiveTimeInLongInteger() {
-    long time = DateUtility.parseTime("1:30");
-    int sec = 1000;
-    int secInMin = 60;
-    Assert.assertEquals(time,90 * secInMin * sec);
+  public void shouldGiveEmptyListWhenGivenDayDoesNotComeEvenOnceBetweenStartDateAndEndDate() throws ParseException {
+    Date startDate = DateUtility.parseDate("2018-08-08");
+    Date endDate = DateUtility.parseDate("2018-08-09");
+    ArrayList<Date> expectedDates = new ArrayList<>();
+    Assert.assertEquals(DateUtility.getAllDatesBetweenOf(DayOfWeek.MONDAY, startDate, endDate), expectedDates);
   }
 
   @Test
-  public void shouldGiveTimeInLongIntegerForAnyTime() {
-    long time = DateUtility.parseTime("14:30");
-    int sec = 1000;
-    int secInMin = 60;
-    Assert.assertEquals(time,(14*60+30)* secInMin * sec);
+  public void shouldGiveAllDatesOfTheGivenDayBetweenStartDateAndEndDate() throws ParseException {
+    Date startDate = DateUtility.parseDate("2018-08-04");
+    Date endDate = DateUtility.parseDate("2018-08-22");
+    ArrayList<Date> expectedDates = new ArrayList<>();
+    expectedDates.add(DateUtility.parseDate("2018-08-06"));
+    expectedDates.add(DateUtility.parseDate("2018-08-13"));
+    expectedDates.add(DateUtility.parseDate("2018-08-20"));
+    Assert.assertEquals(DateUtility.getAllDatesBetweenOf(DayOfWeek.MONDAY, startDate, endDate), expectedDates);
   }
 
   @Test
-  public void name() {
-
-    ArrayList<String> timings = new ArrayList<>();
-    timings.add("11:30");
-    int j=0;
-    String timeString = timings.get(j);
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-    LocalTime time = LocalTime.parse(timeString, formatter);
-    System.out.println(time.getHour());
-    System.out.println(time.getMinute());
+  public void shouldGiveAllDatesOfSundayBetweenStartDateAndEndDate() throws ParseException {
+    Date startDate = DateUtility.parseDate("2018-08-04");
+    Date endDate = DateUtility.parseDate("2018-08-22");
+    ArrayList<Date> expectedDates = new ArrayList<>();
+    expectedDates.add(DateUtility.parseDate("2018-08-05"));
+    expectedDates.add(DateUtility.parseDate("2018-08-12"));
+    expectedDates.add(DateUtility.parseDate("2018-08-19"));
+    Assert.assertEquals(DateUtility.getAllDatesBetweenOf(DayOfWeek.SUNDAY, startDate, endDate), expectedDates);
   }
 }

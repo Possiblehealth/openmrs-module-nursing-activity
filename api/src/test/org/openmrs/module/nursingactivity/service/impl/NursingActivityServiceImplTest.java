@@ -15,11 +15,13 @@ import org.openmrs.module.nursingactivity.utils.DateUtility;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Date;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.openmrs.module.nursingactivity.FrequencyType.WEEKLY;
 import static org.openmrs.module.nursingactivity.constants.MedicineScheduleConstants.START_OF_WEEK;
 
 
@@ -113,7 +115,8 @@ public class NursingActivityServiceImplTest {
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowErrorWhenIllegalPatientUuidIsProvidedWhileCreatingSchedules() {
     when(patientService.getPatientByUuid("XYZ")).thenReturn(null);
-    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", new ArrayList<>());
+    ArrayList<DayOfWeek> days = new ArrayList<>();
+    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", new ArrayList<>(), WEEKLY, days);
     nursingActivityService.createSchedules(scheduleRequest);
   }
 
@@ -123,7 +126,8 @@ public class NursingActivityServiceImplTest {
     ArrayList<String> timings = new ArrayList<>();
     timings.add("11:23");
     timings.add("111:23");
-    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", timings);
+    ArrayList<DayOfWeek> days = new ArrayList<>();
+    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", timings, WEEKLY, days);
     nursingActivityService.createSchedules(scheduleRequest);
   }
 

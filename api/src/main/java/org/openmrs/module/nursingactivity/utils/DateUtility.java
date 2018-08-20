@@ -2,6 +2,7 @@ package org.openmrs.module.nursingactivity.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -11,7 +12,7 @@ import java.util.Date;
 
 public class DateUtility {
   public static Date parseDate(String dateString) throws ParseException {
-    if (dateString == null){
+    if (dateString == null) {
       return null;
     }
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -35,7 +36,7 @@ public class DateUtility {
   public static Date addDays(Date date, int noOfDaysToAdd) {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
-    calendar.add(Calendar.DATE,noOfDaysToAdd);
+    calendar.add(Calendar.DATE, noOfDaysToAdd);
     return calendar.getTime();
   }
 
@@ -50,13 +51,12 @@ public class DateUtility {
   }
 
   public static boolean areAllValidTimeStrings(ArrayList<String> timings) {
-    for (int i=0;i<timings.size();i++){
-      try{
+    for (int i = 0; i < timings.size(); i++) {
+      try {
         String timeString = timings.get(i);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime time = LocalTime.parse(timeString, formatter);
-      }
-      catch (DateTimeParseException dateTimeParseException){
+      } catch (DateTimeParseException dateTimeParseException) {
         return false;
       }
     }
@@ -70,8 +70,14 @@ public class DateUtility {
     return isSameAsStartDate || isBetween || isSameAsEndDate;
   }
 
-  public static long parseTime(String timeString) {
-
-    return 0;
+  public static ArrayList<Date> getAllDatesBetweenOf(DayOfWeek dayOfWeek, Date startDate, Date endDate) {
+    ArrayList<Date> datesBetween = new ArrayList<>();
+    for (Date date = startDate; DateUtility.isBetween(startDate, endDate, date); date = DateUtility.addDays(date, 6)) {
+      Date weekStart = getWeekStart(date, dayOfWeek.getValue() + 1);
+      if (!weekStart.before(startDate)) {
+        datesBetween.add(weekStart);
+      }
+    }
+    return datesBetween;
   }
 }

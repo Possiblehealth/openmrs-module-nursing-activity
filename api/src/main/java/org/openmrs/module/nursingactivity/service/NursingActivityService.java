@@ -1,6 +1,5 @@
 package org.openmrs.module.nursingactivity.service;
 
-import org.openmrs.Order;
 import org.openmrs.module.nursingactivity.contract.MedicineScheduleRequest;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
 
