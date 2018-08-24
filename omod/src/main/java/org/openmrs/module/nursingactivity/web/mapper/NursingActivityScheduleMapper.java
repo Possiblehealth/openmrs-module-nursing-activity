@@ -29,7 +29,9 @@ public class NursingActivityScheduleMapper {
     map.put("scheduledTime", schedule.getScheduleTime());
     map.put("status", schedule.getStatus());
     Order order = schedule.getOrder();
-    map.put("order", mapOrder(order));
+    if (order != null) {
+      map.put("order", mapOrder(order));
+    }
     if (isMedicationAdministrationSchedule(schedule)) {
       map.put("drug", mapDrug(schedule));
     }

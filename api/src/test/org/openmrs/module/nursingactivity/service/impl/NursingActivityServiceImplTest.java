@@ -116,7 +116,8 @@ public class NursingActivityServiceImplTest {
   public void shouldThrowErrorWhenIllegalPatientUuidIsProvidedWhileCreatingSchedules() {
     when(patientService.getPatientByUuid("XYZ")).thenReturn(null);
     ArrayList<DayOfWeek> days = new ArrayList<>();
-    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", new ArrayList<>(), WEEKLY, days);
+    Date startDate = new Date();
+    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", new ArrayList<>(), WEEKLY, days, startDate, new Date(), 1, "ml", null, WEEKLY);
     nursingActivityService.createSchedules(scheduleRequest);
   }
 
@@ -127,7 +128,8 @@ public class NursingActivityServiceImplTest {
     timings.add("11:23");
     timings.add("111:23");
     ArrayList<DayOfWeek> days = new ArrayList<>();
-    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", timings, WEEKLY, days);
+    Date startDate = new Date();
+    MedicineScheduleRequest scheduleRequest = new MedicineScheduleRequest("XYZ", "order123", timings, WEEKLY, days, startDate, new Date(), 1, "ml", null, WEEKLY);
     nursingActivityService.createSchedules(scheduleRequest);
   }
 

@@ -4,6 +4,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MedicineScheduleRequest {
@@ -12,16 +13,28 @@ public class MedicineScheduleRequest {
   private String orderUuid;
   private ArrayList<String> timings;
   private ArrayList<DayOfWeek> days;
+  private Date startingDate;
+  private Date endingDate;
+  private Double dose;
+  private String doseUnits;
+  private String drugUuid;
+  private String route;
 
   public MedicineScheduleRequest() {
   }
 
-  public MedicineScheduleRequest(String patientUuid, String orderUuid, ArrayList<String> timings, String scheduleType, ArrayList<DayOfWeek> days) {
+  public MedicineScheduleRequest(String patientUuid, String orderUuid, ArrayList<String> timings, String scheduleType, ArrayList<DayOfWeek> days, Date startingDate, Date endingDate, Double dose, String doseUnits, String drugUuid, String route) {
     this.patientUuid = patientUuid;
     this.orderUuid = orderUuid;
     this.timings = timings;
     this.scheduleType = scheduleType;
     this.days = days;
+    this.startingDate = startingDate;
+    this.endingDate = endingDate;
+    this.dose = dose;
+    this.doseUnits = doseUnits;
+    this.drugUuid = drugUuid;
+    this.route = route;
   }
 
   public String getPatientUuid() {
@@ -42,5 +55,29 @@ public class MedicineScheduleRequest {
 
   public ArrayList<DayOfWeek> getDays() {
     return this.days;
+  }
+
+  public Date getStartingDate() {
+    return this.startingDate;
+  }
+
+  public Date getEndingDate() {
+    return this.endingDate;
+  }
+
+  public Double getDose() {
+    return this.dose;
+  }
+
+  public String getDoseUnits() {
+    return this.doseUnits;
+  }
+
+  public String getDrugUuid() {
+    return this.drugUuid;
+  }
+
+  public String getRoute() {
+    return this.route;
   }
 }

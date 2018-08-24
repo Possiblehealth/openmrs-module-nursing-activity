@@ -1,8 +1,10 @@
 package org.openmrs.module.nursingactivity.service.impl;
 
-import org.openmrs.DrugOrder;
+import org.openmrs.Concept;
+import org.openmrs.Drug;
 import org.openmrs.Order;
 import org.openmrs.Patient;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.nursingactivity.FrequencyType;
@@ -34,12 +36,14 @@ public class NursingActivityServiceImpl implements NursingActivityService {
 
   private PatientService patientService;
   private OrderService orderService;
+  private ConceptService conceptService;
 
   @Autowired
-  public NursingActivityServiceImpl(PatientService patientService, NursingActivityScheduleDao nursingActivityScheduleDao, OrderService orderService) {
+  public NursingActivityServiceImpl(PatientService patientService, NursingActivityScheduleDao nursingActivityScheduleDao, OrderService orderService, ConceptService conceptService) {
     this.patientService = patientService;
     this.nursingActivityScheduleDao = nursingActivityScheduleDao;
     this.orderService = orderService;
+    this.conceptService = conceptService;
   }
 
   @Override
@@ -67,9 +71,7 @@ public class NursingActivityServiceImpl implements NursingActivityService {
   @Override
   public String createSchedules(MedicineScheduleRequest medicineScheduleRequest) {
     String patientUuid = medicineScheduleRequest.getPatientUuid();
-    String orderUuid = medicineScheduleRequest.getOrderUuid();
     Patient patient = patientService.getPatientByUuid(patientUuid);
-    Order order = orderService.getOrderByUuid(orderUuid);
     ArrayList<String> timings = medicineScheduleRequest.getTimings();
     if (!DateUtility.areAllValidTimeStrings(timings)) {
       throw new IllegalArgumentException("Given time strings are not valid");
@@ -78,44 +80,36 @@ public class NursingActivityServiceImpl implements NursingActivityService {
       throw new IllegalArgumentException("Patient is required when fetching active orders");
     }
     //TODO:Remove this when you are dealing with order as optional
-    if (order == null) {
-      throw new IllegalArgumentException("Currently order is required to create schedules");
-    }
-    Date startDate = order.getScheduledDate();
-    Date endDate = order.getAutoExpireDate();
-    DrugOrder drugOrder = (DrugOrder) order;
+//    if (order == null) {
+//      throw new IllegalArgumentException("Currently order is required to create schedules");
+//    }
     if (medicineScheduleRequest.getScheduleType().equals(FrequencyType.WEEKLY)) {
-      saveWeeklyMedicineSchedules(patient, timings, drugOrder, startDate, endDate, medicineScheduleRequest.getDays());
+      ArrayList<DayOfWeek> dayOfWeeks = medicineScheduleRequest.getDays();
+      if (dayOfWeeks == null || dayOfWeeks.size() == 0) {
+        throw new IllegalArgumentException("Days are required for week type schedules");
+      }
+      saveWeeklyMedicineSchedules(medicineScheduleRequest);
     } else {
-      saveDailyMedicationSchedules(patient, timings, drugOrder, startDate, endDate);
+      saveDailyMedicationSchedules(medicineScheduleRequest);
     }
     return "{\"stats\":\"added\"}";
   }
 
-  private void saveWeeklyMedicineSchedules(Patient patient, ArrayList<String> timings, DrugOrder drugOrder, Date startDate, Date endDate, ArrayList<DayOfWeek> dayOfWeeks) {
-    if (dayOfWeeks == null || dayOfWeeks.size() == 0) {
-      throw new IllegalArgumentException("Days are required for week type schedules");
-    }
-    for (int i = 0; i < dayOfWeeks.size(); i++) {
-      ArrayList<Date> allDatesBetweenDuration = DateUtility.getAllDatesBetweenOf(dayOfWeeks.get(i), startDate, endDate);
-      saveMedicationSchedulesForDuration(patient, drugOrder, allDatesBetweenDuration, timings);
-    }
-  }
-
-  private void saveMedicationSchedulesForDuration(Patient patient, DrugOrder drugOrder, ArrayList<Date> allDatesBetweenDuration, ArrayList<String> timings) {
-    for (int j = 0; j < allDatesBetweenDuration.size(); j++) {
-      Date scheduledDate = allDatesBetweenDuration.get(j);
-      saveSchedulesForADay(patient, timings, drugOrder, scheduledDate);
-    }
-  }
-
-  private void saveDailyMedicationSchedules(Patient patient, ArrayList<String> timings, DrugOrder drugOrder, Date startDate, Date endDate) {
+  private void saveDailyMedicationSchedules(MedicineScheduleRequest medicineScheduleRequest) {
+    Date startDate = medicineScheduleRequest.getStartingDate();
+    Date endDate = medicineScheduleRequest.getEndingDate();
     for (Date scheduledDate = startDate; DateUtility.isBetween(startDate, endDate, scheduledDate); scheduledDate = DateUtility.addDays(scheduledDate, 1)) {
-      saveSchedulesForADay(patient, timings, drugOrder, scheduledDate);
+      saveSchedulesForADay(medicineScheduleRequest, scheduledDate);
     }
   }
 
-  private void saveSchedulesForADay(Patient patient, ArrayList<String> timings, DrugOrder drugOrder, Date scheduledDate) {
+  private void saveSchedulesForADay(MedicineScheduleRequest medicineScheduleRequest, Date scheduledDate) {
+    ArrayList<String> timings = medicineScheduleRequest.getTimings();
+    Order order = orderService.getOrderByUuid(medicineScheduleRequest.getOrderUuid());
+    Patient patient = patientService.getPatientByUuid(medicineScheduleRequest.getPatientUuid());
+    Concept doseUnit = conceptService.getConcept(medicineScheduleRequest.getDoseUnits());
+    Drug drug = conceptService.getDrugByUuid(medicineScheduleRequest.getDrugUuid());
+    Concept route = conceptService.getConcept(medicineScheduleRequest.getRoute());
     for (int j = 0; j < timings.size(); j++) {
       String timeString = timings.get(j);
 
@@ -126,11 +120,11 @@ public class NursingActivityServiceImpl implements NursingActivityService {
 
       MedicationAdministrationSchedule schedule = new MedicationAdministrationSchedule();
       schedule.setPatient(patient);
-      schedule.setOrder(drugOrder);
-      schedule.setDose(drugOrder.getDose());
-      schedule.setDoseUnits(drugOrder.getDoseUnits());
-      schedule.setDrug(drugOrder.getDrug());
-      schedule.setRoute(drugOrder.getRoute());
+      schedule.setOrder(order);
+      schedule.setDose(medicineScheduleRequest.getDose());
+      schedule.setDoseUnits(doseUnit);
+      schedule.setRoute(route);
+      schedule.setDrug(drug);
 
       schedule.setActivityType(activityType);
       schedule.setScheduleTime(scheduleTime);
@@ -139,6 +133,23 @@ public class NursingActivityServiceImpl implements NursingActivityService {
       this.nursingActivityScheduleDao.saveSchedule(schedule);
 
       System.out.println(schedule);
+    }
+  }
+
+  private void saveWeeklyMedicineSchedules(MedicineScheduleRequest medicineScheduleRequest) {
+    ArrayList<DayOfWeek> dayOfWeeks = medicineScheduleRequest.getDays();
+    for (int i = 0; i < dayOfWeeks.size(); i++) {
+      Date startDate = medicineScheduleRequest.getStartingDate();
+      Date endDate = medicineScheduleRequest.getEndingDate();
+      ArrayList<Date> allDatesBetweenDuration = DateUtility.getAllDatesBetweenOf(dayOfWeeks.get(i), startDate, endDate);
+      saveMedicationSchedulesForDuration(allDatesBetweenDuration, medicineScheduleRequest);
+    }
+  }
+
+  private void saveMedicationSchedulesForDuration(ArrayList<Date> allDatesBetweenDuration, MedicineScheduleRequest medicineScheduleRequest) {
+    for (int j = 0; j < allDatesBetweenDuration.size(); j++) {
+      Date scheduledDate = allDatesBetweenDuration.get(j);
+      saveSchedulesForADay(medicineScheduleRequest, scheduledDate);
     }
   }
 
