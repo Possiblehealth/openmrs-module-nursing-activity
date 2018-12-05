@@ -110,13 +110,14 @@ public class NursingActivityServiceImpl implements NursingActivityService {
     Concept doseUnit = conceptService.getConcept(medicineScheduleRequest.getDoseUnits());
     Drug drug = conceptService.getDrugByUuid(medicineScheduleRequest.getDrugUuid());
     Concept route = conceptService.getConcept(medicineScheduleRequest.getRoute());
+    NursingActivityType medicationActivity = getNursingActivityType("Medication");
+    if (medicationActivity == null) {
+      throw new RuntimeException("Can not find Medication Activity");
+    }
+
     for (int j = 0; j < timings.size(); j++) {
       String timeString = timings.get(j);
-
       Date scheduleTime = createScheduleTime(scheduledDate, timeString);
-      NursingActivityType activityType = new NursingActivityType();
-      activityType.setTypeId(1);
-      activityType.setActivityName("Medication");
 
       MedicationAdministrationSchedule schedule = new MedicationAdministrationSchedule();
       schedule.setPatient(patient);
@@ -126,7 +127,7 @@ public class NursingActivityServiceImpl implements NursingActivityService {
       schedule.setRoute(route);
       schedule.setDrug(drug);
 
-      schedule.setActivityType(activityType);
+      schedule.setActivityType(medicationActivity);
       schedule.setScheduleTime(scheduleTime);
       schedule.setStatus("scheduled");
 
@@ -134,6 +135,16 @@ public class NursingActivityServiceImpl implements NursingActivityService {
 
       System.out.println(schedule);
     }
+  }
+
+  private NursingActivityType getNursingActivityType(String activityTypeName) {
+    List<NursingActivityType> nursingActivityTypes = nursingActivityScheduleDao.getNursingActivityTypes();
+    for (NursingActivityType activityType : nursingActivityTypes) {
+       if (activityType.getActivityName().equals(activityTypeName)) {
+          return activityType;
+       }
+    }
+    return null;
   }
 
   private void saveWeeklyMedicineSchedules(MedicineScheduleRequest medicineScheduleRequest) {

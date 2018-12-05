@@ -3,7 +3,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.openmrs.module.nursingactivity.model">
-  <class name="NursingActivityType" table="nursing_activity_schedule">
+  <class name="NursingActivityType" table="nursing_activity_type">
     <id name="typeId" type="java.lang.Integer" column="nursing_activity_type_id">
       <generator class="native">
         <param name="sequence">nursing_activity_type_id_seq</param>

@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.Patient;
 import org.openmrs.module.nursingactivity.dao.NursingActivityScheduleDao;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
+import org.openmrs.module.nursingactivity.model.NursingActivityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,12 @@ public class NursingActivityScheduleDaoImpl implements NursingActivityScheduleDa
     Session currentSession = sessionFactory.getCurrentSession();
     currentSession.saveOrUpdate(schedule);
     return schedule;
+  }
+
+  @Override
+  public List<NursingActivityType> getNursingActivityTypes() {
+    Criteria criteria = sessionFactory.getCurrentSession().createCriteria(NursingActivityType.class);
+    return criteria.list();
   }
 
 }
