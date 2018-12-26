@@ -151,6 +151,7 @@ public class NursingActivityServiceImpl implements NursingActivityService {
     		      schedule.setScheduleTime(scheduleTime);
     		      schedule.setStatus("scheduled");
     		      this.nursingActivityScheduleDao.saveSchedule(schedule);
+    		      break;
     		     
     	      }
     	  }
