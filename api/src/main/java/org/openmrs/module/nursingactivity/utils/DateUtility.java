@@ -11,11 +11,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtility {
+	
+    public static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
   public static Date parseDate(String dateString) throws ParseException {
     if (dateString == null) {
       return null;
     }
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     format.setLenient(false);
     return format.parse(dateString);
   }
@@ -28,6 +30,24 @@ public class DateUtility {
     calendar.add(Calendar.SECOND, 59);
     return calendar.getTime();
   }
+  
+  
+  public static Date ConvertMilliSecondsToFormattedDate(String milliSeconds) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTimeInMillis(Long.parseLong(milliSeconds));
+      return formattedDateOnly(calendar.getTime());
+  }
+  
+  public static Date formattedDateOnly(Date date) {
+	  
+	  try {
+		date = format.parse(format.format(date));
+	} catch (ParseException e) {
+		e.printStackTrace();
+	}
+	  return date;
+  }
+  
 
   public static int compare(Date startDate, Date endDate) {
     return startDate.compareTo(endDate);

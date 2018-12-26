@@ -19,6 +19,7 @@ public class NursingActivityScheduleMapper {
   }
 
   public List<Object> createResponse(List<NursingActivitySchedule> scheduleEntriesForPatient) {
+	// System.out.println(scheduleEntriesForPatient);
     return scheduleEntriesForPatient.stream().map(schedule -> this.mapToDefaultResponse(schedule)).collect(Collectors.toList());
   }
 
@@ -39,7 +40,6 @@ public class NursingActivityScheduleMapper {
   }
 
   private Map mapDrug(NursingActivitySchedule schedule) {
-//    System.out.println(schedule);
     Locale locale = Context.getUserContext().getLocale();
     MedicationAdministrationSchedule medicationSchedule = (MedicationAdministrationSchedule) schedule;
     Map drugMap = new HashMap();

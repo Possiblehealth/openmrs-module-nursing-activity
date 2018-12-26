@@ -22,7 +22,7 @@ public class NursingActivityScheduleDaoImpl implements NursingActivityScheduleDa
   @Autowired
   public NursingActivityScheduleDaoImpl(SessionFactory sessionFactory) {
     this.sessionFactory = sessionFactory;
-  }
+  }	
 
   @Override
   public List<NursingActivitySchedule> getScheduleEntriesForPatient(Patient patient, Date startDate, Date endDate) {

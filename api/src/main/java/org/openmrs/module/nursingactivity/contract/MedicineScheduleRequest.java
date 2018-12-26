@@ -1,10 +1,12 @@
 package org.openmrs.module.nursingactivity.contract;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.openmrs.module.nursingactivity.model.Schedule;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MedicineScheduleRequest {
@@ -19,6 +21,7 @@ public class MedicineScheduleRequest {
   private String doseUnits;
   private String drugUuid;
   private String route;
+  private List<Schedule> schedules;
 
   public MedicineScheduleRequest() {
   }
@@ -80,4 +83,12 @@ public class MedicineScheduleRequest {
   public String getRoute() {
     return this.route;
   }
+
+public List<Schedule> getSchedules() {
+	return schedules;
+}
+
+public void setSchedules(List<Schedule> schedules) {
+	this.schedules = schedules;
+}
 }

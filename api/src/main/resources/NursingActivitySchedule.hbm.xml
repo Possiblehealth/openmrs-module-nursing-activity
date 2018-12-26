@@ -21,7 +21,7 @@
 
       <key column="nursing_activity_schedule_id"/>
 
-      <many-to-one name="drug" class="org.openmrs.Drug" not-null="false" column="drug_id"/>
+      <many-to-one name="drug" class="org.openmrs.Drug"  column="drug_id"/>
 
       <property name="dose" type="java.lang.Double" column="dose" length="22"/>
       <many-to-one name="doseUnits" class="org.openmrs.Concept" column="dose_units"/>

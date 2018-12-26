@@ -39,5 +39,6 @@ public class MedicationAdministrationSchedule extends NursingActivitySchedule {
 
   public void setDose(Double dose) {
     this.dose = dose;
-  }
+  } 
+  
 }
