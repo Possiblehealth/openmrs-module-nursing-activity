@@ -100,9 +100,9 @@
 				<tableExists tableName="nursing_activity_status" />
 			</not>
 		</preConditions>
-		<comments>
+		<comment>
 			Create table to track status of the nursing activity
-		</comments>
+		</comment>
 		<createTable tableName="nursing_activity_status">
 
 			<column name="nursing_activity_status_id" type="int"
@@ -121,307 +121,6 @@
 				select count(*) from nursing_activity_status;
 			</sqlCheck>
 		</preConditions>
-		<comments>
-			Insert status of nursing activities
-		</comments>
-		<sql>
-			INSERT INTO nursing_activity_status(status) VALUES('SCHEDULED'),
-			('ADMINISTERED');
-		</sql>
-	</changeSet>
-
-	<changeSet id="MAR_20190114120" author="dipakthapa">
-		<preconditions onFail="MARK_RAN">
-			<not>
-				<columnExists columnName="nursing_activity_status_id"
-					tableName="nursing_activity_schedule" />
-			</not>
-		</preconditions>
-		<comments>
-			Add new column with foreign key referenced to
-			nursing_activity_status table
-		</comments>
-		<addColumn tableName="person">
-			<column name="nursing_activity_status_id" type="int">
-				<constraints nullable="false" />
-			</column>
-
-		</addColumn>
-		<addForeignKeyConstraint
-			constraintName="nursing_activity_status_fk"
-			baseTableName="nursing_activity_schedule"
-			baseColumnNames="nursing_activity_status_id"
-			referencedTableName="nursing_activity_status"
-			referencedColumnNames="nursing_activity_status_id" />
-	</changeSet>
-
-	<changeSet id="MAR_20190114130" author="dipakthapa">
-		<preconditions onFail="MARK_RAN">
-			<not>
-				<columnExists columnName="nursing_activity_status_id"
-					tableName="nursing_activity_schedule" />
-			</not>
-		</preconditions>
-		<comments>
-			Add new column with foreign key referenced to
-			nursing_activity_status table
-		</comments>
-		<addColumn tableName="person">
-			<column name="nursing_activity_status_id" type="int">
-				<constraints nullable="false" />
-			</column>
-
-		</addColumn>
-		<addForeignKeyConstraint
-			constraintName="nursing_activity_status_fk"
-			baseTableName="nursing_activity_schedule"
-			baseColumnNames="nursing_activity_status_id"
-			referencedTableName="nursing_activity_status"
-			referencedColumnNames="nursing_activity_status_id" />
-	</changeSet>
-
-	<changeSet id="MAR_201901141240" author="dipakthapa">
-		<preConditions onFail="MARK_RAN">
-			<sqlCheck expectedResult="0">
-				select count(nursing_activity_status_id) from nursing_activity_schedule;
-			</sqlCheck>
-		</preConditions>
-		<comments>
-			Insert values from schedule status column
-		</comments>
-		<sql>
-			UPDATE nursing_activity_schedule SET nursing_activity_status_id =
-			(SELECT nursing_activity_status_id from nursing_activity_status where
-			status='SCHEDULED');
-		</sql>
-	</changeSet>
-
-	<changeSet id="MAR_201901141245" author="dipakthapa">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<columnExists columnName="status"
-					tableName="nursing_activity_schedule" />
-			</not>
-		</preConditions>
-		<comments>
-			Drop column status from nursing_activity_schedule
-		</comments>
-		<dropColumn columnName="status" tableName="nursing_activity_schedule" />
-	</changeSet>
-
-	<changeSet id="MAR_201807171445" author="Yogi">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="nursing_activity_schedule" />
-			</not>
-		</preConditions>
-		<createTable tableName="nursing_activity_schedule">
-			<column name="nursing_activity_schedule_id" type="int"
-				autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="patient_id" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="order_id" type="int">
-				<constraints nullable="true" />
-			</column>
-			<column name="schedule_time" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="status" type="varchar(20)" />
-			<column name="actual_time" type="datetime" />
-			<column name="nursing_activity_type_id" type="int">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-		<addForeignKeyConstraint
-			constraintName="nursing_activity_schedule_patient_fk"
-			baseTableName="nursing_activity_schedule"
-			baseColumnNames="patient_id" referencedTableName="patient"
-			referencedColumnNames="patient_id" />
-		<addForeignKeyConstraint
-			constraintName="nursing_activity_schedule_order_fk"
-			baseTableName="nursing_activity_schedule" baseColumnNames="order_id"
-			referencedTableName="orders" referencedColumnNames="order_id" />
-		<addForeignKeyConstraint
-			constraintName="nursing_activity_schedule_activity_type_fk"
-			baseTableName="nursing_activity_schedule"
-			baseColumnNames="nursing_activity_type_id"
-			referencedTableName="nursing_activity_type"
-			referencedColumnNames="nursing_activity_type_id" />
-	</changeSet>
-
-	<changeSet id="MAR_201807171500" author="yogi">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists
-					tableName="ipd_scheduled_medication_instruction" />
-			</not>
-		</preConditions>
-		<createTable
-			tableName="ipd_scheduled_medication_instruction">
-
-			<column name="nursing_activity_schedule_id" type="int">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="drug_id" type="int">
-				<constraints nullable="true" />
-			</column>
-			<column name="dose" type="double" />
-			<column name="dose_units" type="int" />
-			<column name="route" type="int" />
-		</createTable>
-		<addForeignKeyConstraint
-			constraintName="medication_instruction_nursing_activity_schedule_fk"
-			baseTableName="ipd_scheduled_medication_instruction"
-			baseColumnNames="nursing_activity_schedule_id"
-			referencedTableName="nursing_activity_schedule"
-			referencedColumnNames="nursing_activity_schedule_id" />
-	</changeSet>
-
-	<changeSet id="MAR_201901141200" author="dipakthapa">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="nursing_activity_status" />
-			</not>
-		</preConditions>
-		<comments>
-			Create table to track status of the nursing activity
-		</comments>
-		<createTable tableName="nursing_activity_status">
-
-			<column name="nursing_activity_status_id" type="int"
-				autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="status" type="varchar(100)">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
-	<changeSet id="MAR_201901141210" author="dipakthapa">
-		<preConditions onFail="MARK_RAN">
-			<sqlCheck expectedResult="0">
-				select count(*) from nursing_activity_status;
-			</sqlCheck>
-		</preConditions>
-		<comments>
-			Insert status of nursing activities
-		</comments>
-		<sql>
-			INSERT INTO nursing_activity_status(status) VALUES('SCHEDULED'),
-			('ADMINISTERED');
-		</sql>
-	</changeSet>
-
-	<changeSet id="MAR_20190114120" author="dipakthapa">
-		<preconditions onFail="MARK_RAN">
-			<not>
-				<columnExists columnName="nursing_activity_status_id"
-					tableName="nursing_activity_schedule" />
-			</not>
-		</preconditions>
-		<comments>
-			Add new column with foreign key referenced to
-			nursing_activity_status table
-		</comments>
-		<addColumn tableName="person">
-			<column name="nursing_activity_status_id" type="int">
-				<constraints nullable="false" />
-			</column>
-
-		</addColumn>
-		<addForeignKeyConstraint
-			constraintName="nursing_activity_status_fk"
-			baseTableName="nursing_activity_schedule"
-			baseColumnNames="nursing_activity_status_id"
-			referencedTableName="nursing_activity_status"
-			referencedColumnNames="nursing_activity_status_id" />
-	</changeSet>
-
-	<changeSet id="MAR_20190114130" author="dipakthapa">
-		<preconditions onFail="MARK_RAN">
-			<not>
-				<columnExists columnName="nursing_activity_status_id"
-					tableName="nursing_activity_schedule" />
-			</not>
-		</preconditions>
-		<comments>
-			Add new column with foreign key referenced to
-			nursing_activity_status table
-		</comments>
-		<addColumn tableName="person">
-			<column name="nursing_activity_status_id" type="int">
-				<constraints nullable="false" />
-			</column>
-
-		</addColumn>
-		<addForeignKeyConstraint
-			constraintName="nursing_activity_status_fk"
-			baseTableName="nursing_activity_schedule"
-			baseColumnNames="nursing_activity_status_id"
-			referencedTableName="nursing_activity_status"
-			referencedColumnNames="nursing_activity_status_id" />
-	</changeSet>
-
-	<changeSet id="MAR_201901141240" author="dipakthapa">
-		<preConditions onFail="MARK_RAN">
-			<sqlCheck expectedResult="0">
-				select count(nursing_activity_status_id) from nursing_activity_schedule;
-			</sqlCheck>
-		</preConditions>
-		<comments>
-			Insert values from schedule status column
-		</comments>
-		<sql>
-			UPDATE nursing_activity_schedule SET nursing_activity_status_id =
-			(SELECT nursing_activity_status_id from nursing_activity_status where
-			status='SCHEDULED');
-		</sql>
-	</changeSet>
-
-	<changeSet id="MAR_201901141245" author="dipakthapa">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<columnExists columnName="status"
-					tableName="nursing_activity_schedule" />
-			</not>
-		</preConditions>
-		<comments>
-			Drop column status from nursing_activity_schedule
-		</comments>
-		<dropColumn columnName="status" tableName="nursing_activity_schedule" />
-	</changeSet>
-
-	<changeSet id="MAR_201901141200" author="dipakthapa">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="nursing_activity_status" />
-			</not>
-		</preConditions>
-		<comment>
-			Create table to track status of the nursing activity
-		</comment>
-		<createTable tableName="nursing_activity_status">
-			<column name="nursing_activity_status_id" type="int"
-				autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="status" type="varchar(100)">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
-	<changeSet id="MAR_201901141210" author="dipakthapa">
-		<preConditions onFail="MARK_RAN">
-			<sqlCheck expectedResult="0">
-				select count(*) from
-				nursing_activity_status;
-			</sqlCheck>
-		</preConditions>
 		<comment>
 			Insert status of nursing activities
 		</comment>
@@ -431,7 +130,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="MAR_20190114120" author="dipakthapa">
+	<changeSet id="MAR_201901141220" author="dipakthapa">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists columnName="nursing_activity_status_id"
@@ -439,32 +138,21 @@
 			</not>
 		</preConditions>
 		<comment>
-			Add new column nursing_activity_status_id in
-			nursing_activity_schedule table
+			Add new column with foreign key referenced to
+			nursing_activity_status table
 		</comment>
 		<addColumn tableName="nursing_activity_schedule">
 			<column name="nursing_activity_status_id" type="int">
-				<constraints nullable="false" />
+				<constraints nullable="false" foreignKeyName="nursing_activity_status_fk"
+				references="nursing_activity_status(nursing_activity_status_id)" />
 			</column>
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="MAR_201901141225" author="dipakthapa">
-		<comment>
-			Add foreign key referenced to nursing_activity_status table
-		</comment>
-		<addForeignKeyConstraint
-			constraintName="nursing_activity_status_fk"
-			baseTableName="nursing_activity_schedule"
-			baseColumnNames="nursing_activity_status_id"
-			referencedTableName="nursing_activity_status"
-			referencedColumnNames="nursing_activity_status_id" />
-	</changeSet>
-
-	<changeSet id="MAR_201901141230" author="dipakthapa">
+	<changeSet id="MAR_201901141240" author="dipakthapa">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="0">
-				select count(nursing_activity_status_id) from nursing_activity_schedule where nursing_activity_status_id != null AND nursing_activity_status_id != 0 ;
+				select count(nursing_activity_status_id) from nursing_activity_schedule;
 			</sqlCheck>
 		</preConditions>
 		<comment>
@@ -477,18 +165,17 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="MAR_201901141240" author="dipakthapa">
+	<changeSet id="MAR_201901141245" author="dipakthapa">
 		<preConditions onFail="MARK_RAN">
-			<columnExists columnName="status" schemaName="openmrs"
-				tableName="nursing_activity_schedule" />
+			<columnExists columnName="status"
+					tableName="nursing_activity_schedule" />
 		</preConditions>
 		<comment>
 			Drop column status from nursing_activity_schedule
 		</comment>
-		<dropColumn columnName="status"
-			tableName="nursing_activity_schedule" />
+		<dropColumn columnName="status" tableName="nursing_activity_schedule" />
 	</changeSet>
-	
+
 	<changeSet id="MAR_201901162250" author="dipakthapa">
 		<preConditions onFail="MARK_RAN">
 			<not>
