@@ -23,6 +23,7 @@
   <mappingFiles>
     NursingActivityType.hbm.xml
     NursingActivitySchedule.hbm.xml
+    NursingActivityStatus.hbm.xml
   </mappingFiles>
 
   <messages>

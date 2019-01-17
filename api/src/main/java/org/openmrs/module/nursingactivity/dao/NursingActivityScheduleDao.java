@@ -2,6 +2,7 @@ package org.openmrs.module.nursingactivity.dao;
 
 import org.openmrs.Patient;
 import org.openmrs.module.nursingactivity.model.NursingActivitySchedule;
+import org.openmrs.module.nursingactivity.model.NursingActivityStatus;
 import org.openmrs.module.nursingactivity.model.NursingActivityType;
 
 import java.util.Date;
@@ -11,4 +12,5 @@ public interface NursingActivityScheduleDao {
   List<NursingActivitySchedule> getScheduleEntriesForPatient(Patient patient, Date startDate, Date endDate);
   NursingActivitySchedule saveSchedule(NursingActivitySchedule schedule);
   List<NursingActivityType> getNursingActivityTypes();
+  List<NursingActivityStatus> getNursingActivityStatus();
 }

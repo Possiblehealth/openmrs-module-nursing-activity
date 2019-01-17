@@ -2,83 +2,89 @@ package org.openmrs.module.nursingactivity.model;
 
 import org.openmrs.Order;
 import org.openmrs.Patient;
+import org.openmrs.User;
 
 import java.util.Date;
 
 public class NursingActivitySchedule {
-  private Patient patient;
-  private Order order;
-  private Date scheduleTime;
-  private Date actualTime;
-  private Integer scheduleId;
-  private NursingActivityType activityType;
-  private String status;
+	private Patient patient;
+	private Order order;
+	private Date scheduleTime;
+	private Date actualTime;
+	private Long scheduleId;
+	private NursingActivityType activityType;
+	private NursingActivityStatus activityStatus;
+	private User administeredBy;
 
-  public String getStatus() {
-    return status;
-  }
+	public NursingActivityType getActivityType() {
+		return activityType;
+	}
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+	public void setActivityType(NursingActivityType activityType) {
+		this.activityType = activityType;
+	}
 
-  public NursingActivityType getActivityType() {
-    return activityType;
-  }
+	public Long getScheduleId() {
+		return scheduleId;
+	}
 
-  public void setActivityType(NursingActivityType activityType) {
-    this.activityType = activityType;
-  }
+	public void setScheduleId(Long scheduleId) {
+		this.scheduleId = scheduleId;
+	}
 
-  public Integer getScheduleId() {
-    return scheduleId;
-  }
+	public Date getActualTime() {
+		return actualTime;
+	}
 
-  public void setScheduleId(Integer scheduleId) {
-    this.scheduleId = scheduleId;
-  }
+	public void setActualTime(Date actualTime) {
+		this.actualTime = actualTime;
+	}
 
-  public Date getActualTime() {
-    return actualTime;
-  }
+	public Date getScheduleTime() {
+		return scheduleTime;
+	}
 
-  public void setActualTime(Date actualTime) {
-    this.actualTime = actualTime;
-  }
+	public void setScheduleTime(Date scheduleTime) {
+		this.scheduleTime = scheduleTime;
+	}
 
-  public Date getScheduleTime() {
-    return scheduleTime;
-  }
+	public Order getOrder() {
+		return order;
+	}
 
-  public void setScheduleTime(Date scheduleTime) {
-    this.scheduleTime = scheduleTime;
-  }
+	public void setOrder(Order order) {
+		this.order = order;
+	}
 
-  public Order getOrder() {
-    return order;
-  }
+	public Patient getPatient() {
+		return patient;
+	}
 
-  public void setOrder(Order order) {
-    this.order = order;
-  }
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
 
-  public Patient getPatient() {
-    return patient;
-  }
+	public NursingActivityStatus getActivityStatus() {
+		return activityStatus;
+	}
 
-  public void setPatient(Patient patient) {
-    this.patient = patient;
-  }
+	public void setActivityStatus(NursingActivityStatus activityStatus) {
+		this.activityStatus = activityStatus;
+	}
+	
+	public User getAdministeredBy() {
+		return administeredBy;
+	}
 
-  @Override
-  public String toString() {
-    return "NursingActivitySchedule{" +
-        "patient=" + patient +
-        ", scheduleTime=" + scheduleTime +
-        ", actualTime=" + actualTime +
-        ", scheduleId=" + scheduleId +
-        ", activityType=" + activityType +
-        ", status='" + status + '\'' +
-        '}';
-  }
+	public void setAdministeredBy(User administeredBy) {
+		this.administeredBy = administeredBy;
+	}
+
+	@Override
+	public String toString() {
+		return "NursingActivitySchedule [patient=" + patient + ", order=" + order + ", scheduleTime=" + scheduleTime
+				+ ", actualTime=" + actualTime + ", scheduleId=" + scheduleId + ", activityType=" + activityType
+				+ ", activityStatus=" + activityStatus + ", administeredBy=" + administeredBy + "]";
+	}
+
 }
