@@ -194,4 +194,33 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="MAR_2019012315:00" author="dipakthapa">
+    	<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				SELECT count(*) FROM
+				privilege where
+				privilege='app:mar';
+			</sqlCheck>
+		</preConditions>
+        <comment>Add privilege to submit DHIS reports</comment>
+        <sql>
+        	INSERT INTO privilege (privilege, description, uuid) VALUES ('app:mar','MAR access privilege',uuid());
+        </sql>
+    </changeSet>
+    
+    <changeSet id="MAR_201901231510" author="dipakthapa">
+    	<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				SELECT count(*) FROM
+				role_privilege where
+				role='Nurse' AND 
+				privilege='app:mar';
+			</sqlCheck>
+		</preConditions>
+        <comment>Provide submit DHIS report privilege to Privilege Level: Full role</comment>
+        <sql>
+        	INSERT INTO role_privilege (role, privilege) VALUES ('Nurse','app:mar');
+        </sql>
+    </changeSet>
+	
 </databaseChangeLog>
