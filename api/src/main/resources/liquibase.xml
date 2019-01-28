@@ -93,6 +93,20 @@
 			referencedTableName="nursing_activity_schedule"
 			referencedColumnNames="nursing_activity_schedule_id" />
 	</changeSet>
+	
+	<changeSet id="MAR_201901281235" author="dipakthapa">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				select count(*) from nursing_activity_type where activity_name='Medication';
+			</sqlCheck>
+		</preConditions>
+		<comment>
+			Insert a value in nursing_activity_type
+		</comment>
+		<sql>
+			INSERT INTO nursing_activity_type values (1, 'Medication');
+		</sql>
+	</changeSet>
 
 	<changeSet id="MAR_201901141200" author="dipakthapa">
 		<preConditions onFail="MARK_RAN">
