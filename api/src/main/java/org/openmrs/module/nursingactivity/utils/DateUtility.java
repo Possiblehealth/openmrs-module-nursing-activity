@@ -11,93 +11,106 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtility {
-	
-    public static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-  public static Date parseDate(String dateString) throws ParseException {
-    if (dateString == null) {
-      return null;
-    }
-    format.setLenient(false);
-    return format.parse(dateString);
-  }
+	public static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	public static SimpleDateFormat FORMAT_WITH_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-  public static Date getEndOfDay(Date date) {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    calendar.add(Calendar.HOUR, 23);
-    calendar.add(Calendar.MINUTE, 59);
-    calendar.add(Calendar.SECOND, 59);
-    return calendar.getTime();
-  }
-  
-  
-  public static Date ConvertMilliSecondsToFormattedDate(String milliSeconds) {
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTimeInMillis(Long.parseLong(milliSeconds));
-      return formattedDateOnly(calendar.getTime());
-  }
-  
-  public static Date formattedDateOnly(Date date) {
-	  
-	  try {
-		date = format.parse(format.format(date));
-	} catch (ParseException e) {
-		e.printStackTrace();
+	public static Date parseDate(String dateString) throws ParseException {
+		if (dateString == null) {
+			return null;
+		}
+		format.setLenient(false);
+		return format.parse(dateString);
 	}
-	  return date;
-  }
-  
 
-  public static int compare(Date startDate, Date endDate) {
-    return startDate.compareTo(endDate);
-  }
+	public static Date getEndOfDay(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.HOUR, 23);
+		calendar.add(Calendar.MINUTE, 59);
+		calendar.add(Calendar.SECOND, 59);
+		return calendar.getTime();
+	}
 
-  public static Date addDays(Date date, int noOfDaysToAdd) {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    calendar.add(Calendar.DATE, noOfDaysToAdd);
-    return calendar.getTime();
-  }
+	public static Date ConvertMilliSecondsToFormattedDate(String milliSeconds) {
+		return ConvertMilliSecondsToFormattedDate(milliSeconds, Boolean.FALSE);
+	}
+	
+	public static Date ConvertMilliSecondsToFormattedDate(String milliSeconds, Boolean includeTime) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(Long.parseLong(milliSeconds));
+		return includeTime ? formattedDate(calendar.getTime()) : formattedDateOnly(calendar.getTime());
+	}
 
-  public static Date getWeekStart(Date date, int startOfWeek) {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    calendar.clear(Calendar.MINUTE);
-    calendar.clear(Calendar.SECOND);
-    calendar.clear(Calendar.MILLISECOND);
-    calendar.set(Calendar.DAY_OF_WEEK, startOfWeek);
-    return calendar.getTime();
-  }
+	public static Date formattedDate(Date date) {
+		try {
+			date = FORMAT_WITH_TIME.parse(FORMAT_WITH_TIME.format(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
 
-  public static boolean areAllValidTimeStrings(ArrayList<String> timings) {
-    for (int i = 0; i < timings.size(); i++) {
-      try {
-        String timeString = timings.get(i);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime time = LocalTime.parse(timeString, formatter);
-      } catch (DateTimeParseException dateTimeParseException) {
-        return false;
-      }
-    }
-    return true;
-  }
+	public static Date formattedDateOnly(Date date) {
 
-  public static boolean isBetween(Date startDate, Date endDate, Date date) {
-    boolean isBetween = startDate.before(date) && endDate.after(date);
-    boolean isSameAsStartDate = startDate.equals(date);
-    boolean isSameAsEndDate = endDate.equals(date);
-    return isSameAsStartDate || isBetween || isSameAsEndDate;
-  }
+		try {
+			date = format.parse(format.format(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
+	
+	public static int compare(Date startDate, Date endDate) {
+		return startDate.compareTo(endDate);
+	}
 
-  public static ArrayList<Date> getAllDatesBetweenOf(DayOfWeek dayOfWeek, Date startDate, Date endDate) {
-    ArrayList<Date> datesBetween = new ArrayList<>();
-    for (Date date = startDate; DateUtility.isBetween(startDate, endDate, date); date = DateUtility.addDays(date, 6)) {
-      Date weekStart = getWeekStart(date, dayOfWeek.getValue() + 1);
-      if (!weekStart.before(startDate)) {
-        datesBetween.add(weekStart);
-      }
-    }
-    return datesBetween;
-  }
+	public static Date addDays(Date date, int noOfDaysToAdd) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DATE, noOfDaysToAdd);
+		return calendar.getTime();
+	}
+
+	public static Date getWeekStart(Date date, int startOfWeek) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.clear(Calendar.MINUTE);
+		calendar.clear(Calendar.SECOND);
+		calendar.clear(Calendar.MILLISECOND);
+		calendar.set(Calendar.DAY_OF_WEEK, startOfWeek);
+		return calendar.getTime();
+	}
+
+	public static boolean areAllValidTimeStrings(ArrayList<String> timings) {
+		for (int i = 0; i < timings.size(); i++) {
+			try {
+				String timeString = timings.get(i);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+				LocalTime time = LocalTime.parse(timeString, formatter);
+			} catch (DateTimeParseException dateTimeParseException) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isBetween(Date startDate, Date endDate, Date date) {
+		boolean isBetween = startDate.before(date) && endDate.after(date);
+		boolean isSameAsStartDate = startDate.equals(date);
+		boolean isSameAsEndDate = endDate.equals(date);
+		return isSameAsStartDate || isBetween || isSameAsEndDate;
+	}
+
+	public static ArrayList<Date> getAllDatesBetweenOf(DayOfWeek dayOfWeek, Date startDate, Date endDate) {
+		ArrayList<Date> datesBetween = new ArrayList<>();
+		for (Date date = startDate; DateUtility.isBetween(startDate, endDate,
+				date); date = DateUtility.addDays(date, 6)) {
+			Date weekStart = getWeekStart(date, dayOfWeek.getValue() + 1);
+			if (!weekStart.before(startDate)) {
+				datesBetween.add(weekStart);
+			}
+		}
+		return datesBetween;
+	}
 }
