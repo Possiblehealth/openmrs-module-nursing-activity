@@ -245,7 +245,7 @@
 				privilege='app:mar';
 			</sqlCheck>
 		</preConditions>
-        <comment>Provide submit DHIS report privilege to Privilege Level: Full role</comment>
+        <comment>Provide MAR privilege to Nurse Role</comment>
         <sql>
         	INSERT INTO role_privilege (role, privilege) VALUES ('Nurse','app:mar');
         </sql>
