@@ -208,6 +208,20 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="MAR_2019012314:00" author="dipakthapa">
+    	<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">
+				SELECT count(*) FROM
+				role where
+				role='Nurse';
+			</sqlCheck>
+		</preConditions>
+        <comment>Add Nurse role</comment>
+        <sql>
+        	INSERT INTO role (role, description, uuid) VALUES ('Nurse','Nurse Role',uuid());
+        </sql>
+    </changeSet>
+	
 	<changeSet id="MAR_2019012315:00" author="dipakthapa">
     	<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="0">
@@ -216,7 +230,7 @@
 				privilege='app:mar';
 			</sqlCheck>
 		</preConditions>
-        <comment>Add privilege to submit DHIS reports</comment>
+        <comment>Add privilege to access MAR application</comment>
         <sql>
         	INSERT INTO privilege (privilege, description, uuid) VALUES ('app:mar','MAR access privilege',uuid());
         </sql>
